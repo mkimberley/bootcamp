@@ -1,4 +1,4 @@
-module github.com/mkimbeley/go_api
+module github.com/mkimbeley/bootcamp
 
 go 1.17
 
