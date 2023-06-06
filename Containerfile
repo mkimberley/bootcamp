@@ -1,21 +1,18 @@
-FROM golang:latest AS build
+FROM go-toolset:1.19.9-2 AS build
 
 # Add Maintainer Info
-LABEL maintainer="Matt Kimberley <mattkimberley84@gmail.com>"
-RUN mkdir /app
-COPY src/ /app
-COPY go.mod /app
-WORKDIR /app
+LABEL maintainer="Matt Kimberley <matt.kimberley@redhat.com>"
+COPY ./src .
 
 # Build the Go app
-RUN go get github.com/mkimbeley/bootcamp
-RUN go build -o main .
+RUN go mod init bootcamp && \
+    go mod tidy -e && \
+    go build .
+
+FROM ubi8/ubi-micro
+COPY --from=build /opt/app-root/src/bootcamp /app/main
 
 # Expose port 8080 to the outside world
 EXPOSE 8080/tcp
-
-
-FROM scratch
-COPY --from=build /app/main /app/main
 # Command to run the executable
 CMD ["/app/main"]
